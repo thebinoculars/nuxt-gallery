@@ -10,7 +10,4 @@ export default defineNuxtConfig({
       title: 'Nuxt Gallery',
     },
   },
-  nitro: {
-    preset: 'netlify',
-  },
 })

@@ -1,53 +1,6 @@
-[functions]
-  directory = "functions"
-
+[build]
+  functions = "functions"
 [[redirects]]
-  from = "/api/auth/login"
-  to = "/.netlify/functions/auth-login"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
-
-[[redirects]]
-  from = "/api/auth/register"
-  to = "/.netlify/functions/auth-register"
-  status = 200
-
-[[redirects]]
-  from = "/api/auth/me"
-  to = "/.netlify/functions/auth-me"
-  status = 200
-
-[[redirects]]
-  from = "/api/albums"
-  to = "/.netlify/functions/albums"
-  status = 200
-
-[[redirects]]
-  from = "/api/albums/:albumId"
-  to = "/.netlify/functions/album-detail"
-  status = 200
-
-[[redirects]]
-  from = "/api/albums/:albumId/images"
-  to = "/.netlify/functions/album-images"
-  status = 200
-
-[[redirects]]
-  from = "/api/upload"
-  to = "/.netlify/functions/upload"
-  status = 200
-
-[[redirects]]
-  from = "/api/images/*"
-  to = "/.netlify/functions/image-delete/:splat"
-  status = 200
-
-# SPA fallback
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-[dev]
-  command = "yarn dev"
-  targetPort = 3000
-  port = 8888

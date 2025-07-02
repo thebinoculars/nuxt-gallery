@@ -1,4 +1,6 @@
-# Nuxt 3 Gallery
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5cb8753d-1987-418e-b65d-a97cfb159467/deploy-status)](https://app.netlify.com/projects/nuxt-gallery/deploys)
+
+# Nuxt Gallery
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
