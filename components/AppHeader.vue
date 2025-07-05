@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-4">
-          <NuxtLink to="/" class="text-2xl font-bold text-blue-400"> Nuxt Album </NuxtLink>
+          <NuxtLink to="/" class="text-2xl font-bold text-blue-400"> Nuxt Gallery </NuxtLink>
         </div>
 
         <div class="flex items-center space-x-4">
