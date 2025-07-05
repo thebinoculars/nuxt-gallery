@@ -10,4 +10,7 @@ export default defineNuxtConfig({
       title: 'Nuxt Gallery',
     },
   },
+  tailwindcss: {
+    viewer: false,
+  },
 })
