@@ -3,9 +3,10 @@ import { verifyToken } from '../utils/jwt'
 import { v2 as cloudinary } from 'cloudinary'
 import { commonErrorResponse } from '../utils/http'
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 200,
       body: '',
     }
@@ -20,6 +21,7 @@ exports.handler = async (event) => {
 
     if (!ObjectId.isValid(albumId)) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({
           success: false,
@@ -45,6 +47,7 @@ exports.handler = async (event) => {
 
         if (!album) {
           return {
+            headers: { 'Content-Type': 'application/json' },
             statusCode: 404,
             body: JSON.stringify({
               success: false,
@@ -57,6 +60,7 @@ exports.handler = async (event) => {
         const imageCount = await images.countDocuments({ albumId: new ObjectId(albumId) })
 
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 200,
           body: JSON.stringify({
             success: true,
@@ -74,6 +78,7 @@ exports.handler = async (event) => {
 
         if (!name?.trim()) {
           return {
+            headers: { 'Content-Type': 'application/json' },
             statusCode: 400,
             body: JSON.stringify({
               success: false,
@@ -90,6 +95,7 @@ exports.handler = async (event) => {
 
         if (!album) {
           return {
+            headers: { 'Content-Type': 'application/json' },
             statusCode: 404,
             body: JSON.stringify({
               success: false,
@@ -112,6 +118,7 @@ exports.handler = async (event) => {
 
         if (result.modifiedCount === 0) {
           return {
+            headers: { 'Content-Type': 'application/json' },
             statusCode: 400,
             body: JSON.stringify({
               success: false,
@@ -124,6 +131,7 @@ exports.handler = async (event) => {
         const updatedAlbum = await albums.findOne({ _id: new ObjectId(albumId) })
 
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 200,
           body: JSON.stringify({
             success: true,
@@ -149,6 +157,7 @@ exports.handler = async (event) => {
 
         if (!album) {
           return {
+            headers: { 'Content-Type': 'application/json' },
             statusCode: 404,
             body: JSON.stringify({
               success: false,
@@ -180,6 +189,7 @@ exports.handler = async (event) => {
         await albums.deleteOne({ _id: new ObjectId(albumId) })
 
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 200,
           body: JSON.stringify({
             success: true,
@@ -189,6 +199,7 @@ exports.handler = async (event) => {
       }
 
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 405,
         body: JSON.stringify({ success: false, message: 'Method not allowed' }),
       }

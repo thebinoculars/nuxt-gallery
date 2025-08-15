@@ -1,9 +1,10 @@
 import bcrypt from 'bcryptjs'
 import { MongoClient } from 'mongodb'
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 200,
       body: '',
     }
@@ -11,6 +12,7 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'POST') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 405,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
@@ -21,6 +23,7 @@ exports.handler = async (event) => {
 
     if (!email || !password) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({
           success: false,
@@ -31,6 +34,7 @@ exports.handler = async (event) => {
 
     if (password.length < 6) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({
           success: false,
@@ -51,6 +55,7 @@ exports.handler = async (event) => {
 
       if (existingUser) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 409,
           body: JSON.stringify({
             success: false,
@@ -75,6 +80,7 @@ exports.handler = async (event) => {
       const result = await users.insertOne(newUser)
 
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 200,
         body: JSON.stringify({
           success: true,
@@ -93,6 +99,7 @@ exports.handler = async (event) => {
     console.error('Register error:', error)
 
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 500,
       body: JSON.stringify({
         success: false,

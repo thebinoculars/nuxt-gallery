@@ -2,9 +2,10 @@ import jwt from 'jsonwebtoken'
 import { MongoClient, ObjectId } from 'mongodb'
 import { commonErrorResponse } from '../utils/http'
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 200,
       body: '',
     }
@@ -12,6 +13,7 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'GET') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 405,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
@@ -21,6 +23,7 @@ exports.handler = async (event) => {
     const authorization = event.headers.authorization
     if (!authorization?.startsWith('Bearer ')) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 401,
         body: JSON.stringify({
           success: false,
@@ -45,6 +48,7 @@ exports.handler = async (event) => {
 
       if (!user) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 401,
           body: JSON.stringify({
             success: false,
@@ -55,6 +59,7 @@ exports.handler = async (event) => {
 
       if (!user.isApproved) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 403,
           body: JSON.stringify({
             success: false,
@@ -64,6 +69,7 @@ exports.handler = async (event) => {
       }
 
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 200,
         body: JSON.stringify({
           success: true,

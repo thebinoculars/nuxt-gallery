@@ -2,9 +2,10 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { MongoClient } from 'mongodb'
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 200,
       body: '',
     }
@@ -12,6 +13,7 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'POST') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 405,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
@@ -22,6 +24,7 @@ exports.handler = async (event) => {
 
     if (!email || !password) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({
           success: false,
@@ -41,6 +44,7 @@ exports.handler = async (event) => {
 
       if (!user) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 401,
           body: JSON.stringify({
             success: false,
@@ -52,6 +56,7 @@ exports.handler = async (event) => {
 
       if (!user.isApproved) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 403,
           body: JSON.stringify({
             success: false,
@@ -64,6 +69,7 @@ exports.handler = async (event) => {
 
       if (!isValidPassword) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 401,
           body: JSON.stringify({
             success: false,
@@ -80,6 +86,7 @@ exports.handler = async (event) => {
       await users.updateOne({ _id: user._id }, { $set: { lastLogin: new Date() } })
 
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 200,
         body: JSON.stringify({
           success: true,
@@ -101,6 +108,7 @@ exports.handler = async (event) => {
     console.error('Login error:', error)
 
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 500,
       body: JSON.stringify({
         success: false,

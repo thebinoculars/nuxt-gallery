@@ -2,9 +2,10 @@ import { MongoClient, ObjectId } from 'mongodb'
 import { verifyToken } from '../utils/jwt'
 import { commonErrorResponse } from '../utils/http'
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 200,
       body: '',
     }
@@ -82,6 +83,7 @@ exports.handler = async (event) => {
         const total = await albums.countDocuments(searchFilter)
 
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 200,
           body: JSON.stringify({
             success: true,
@@ -102,6 +104,7 @@ exports.handler = async (event) => {
 
         if (!name?.trim()) {
           return {
+            headers: { 'Content-Type': 'application/json' },
             statusCode: 400,
             body: JSON.stringify({
               success: false,
@@ -122,6 +125,7 @@ exports.handler = async (event) => {
         const result = await albums.insertOne(newAlbum)
 
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 200,
           body: JSON.stringify({
             success: true,
@@ -134,6 +138,7 @@ exports.handler = async (event) => {
       }
 
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 405,
         body: JSON.stringify({ success: false, message: 'Method not allowed' }),
       }

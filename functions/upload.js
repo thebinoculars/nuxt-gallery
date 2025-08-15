@@ -44,13 +44,14 @@ const parseMultipart = (body, boundary) => {
   return result
 }
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, body: '' }
+    return { headers: { 'Content-Type': 'application/json' }, statusCode: 200, body: '' }
   }
 
   if (event.httpMethod !== 'POST') {
     return {
+      headers: { 'Content-Type': 'application/json' },
       statusCode: 405,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
@@ -68,6 +69,7 @@ exports.handler = async (event) => {
     const contentType = event.headers['content-type'] || event.headers['Content-Type']
     if (!contentType?.includes('multipart/form-data')) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({
           success: false,
@@ -79,6 +81,7 @@ exports.handler = async (event) => {
     const boundary = contentType.split('boundary=')[1]
     if (!boundary) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({ success: false, message: 'Boundary not found in Content-Type' }),
       }
@@ -95,6 +98,7 @@ exports.handler = async (event) => {
 
     if (!file || !albumId || !ObjectId.isValid(albumId)) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({ success: false, message: 'File and valid albumId are required' }),
       }
@@ -102,6 +106,7 @@ exports.handler = async (event) => {
 
     if (!file.contentType.startsWith('image/')) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({ success: false, message: 'Only image files are allowed' }),
       }
@@ -110,6 +115,7 @@ exports.handler = async (event) => {
     const maxSize = 6 * 1024 * 1024
     if (file.content.length > maxSize) {
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 400,
         body: JSON.stringify({ success: false, message: 'File too large (max 6MB)' }),
       }
@@ -129,6 +135,7 @@ exports.handler = async (event) => {
       })
       if (!album) {
         return {
+          headers: { 'Content-Type': 'application/json' },
           statusCode: 404,
           body: JSON.stringify({ success: false, message: 'Album not found' }),
         }
@@ -177,6 +184,7 @@ exports.handler = async (event) => {
       const insertResult = await images.insertOne(imageDoc)
 
       return {
+        headers: { 'Content-Type': 'application/json' },
         statusCode: 200,
         body: JSON.stringify({
           success: true,
