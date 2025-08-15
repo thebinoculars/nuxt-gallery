@@ -21,7 +21,7 @@ export const useAuth = () => {
     }
 
     try {
-      const response = await $fetch('/api/auth/me', {
+      const response = await $fetch('/api/me', {
         headers: {
           Authorization: `Bearer ${token.value}`,
         },
@@ -44,7 +44,7 @@ export const useAuth = () => {
   const login = async (email, password) => {
     isLoading.value = true
     try {
-      const response = await $fetch('/api/auth/login', {
+      const response = await $fetch('/api/login', {
         method: 'POST',
         body: { email, password },
       })
@@ -73,7 +73,7 @@ export const useAuth = () => {
   const register = async (email, password) => {
     isLoading.value = true
     try {
-      const response = await $fetch('/api/auth/register', {
+      const response = await $fetch('/api/register', {
         method: 'POST',
         body: { email, password },
       })

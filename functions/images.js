@@ -1,27 +1,12 @@
 import { MongoClient, ObjectId } from 'mongodb'
-import jwt from 'jsonwebtoken'
+import { verifyToken } from '../utils/jwt'
 import { v2 as cloudinary } from 'cloudinary'
-
-const verifyToken = (authorization) => {
-  if (!authorization?.startsWith('Bearer ')) {
-    throw new Error('Invalid token')
-  }
-  const token = authorization.substring(7)
-  return jwt.verify(token, process.env.JWT_SECRET)
-}
+import { commonErrorResponse } from '../utils/http'
 
 export const handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'DELETE, OPTIONS',
-    'Content-Type': 'application/json',
-  }
-
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers,
       body: '',
     }
   }
@@ -29,7 +14,6 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'DELETE') {
     return {
       statusCode: 405,
-      headers,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
   }
@@ -45,12 +29,11 @@ export const handler = async (event) => {
     const decoded = verifyToken(event.headers.authorization)
 
     const pathParts = event.path.split('/')
-    const imageId = pathParts[pathParts.length - 1]
+    const imageId = pathParts[pathParts.indexOf('images') + 1]
 
     if (!ObjectId.isValid(imageId)) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({
           success: false,
           message: 'Invalid image ID',
@@ -73,7 +56,6 @@ export const handler = async (event) => {
       if (!image) {
         return {
           statusCode: 404,
-          headers,
           body: JSON.stringify({
             success: false,
             message: 'Image not found',
@@ -93,7 +75,6 @@ export const handler = async (event) => {
 
       return {
         statusCode: 200,
-        headers,
         body: JSON.stringify({
           success: true,
           message: 'Image successfully deleted',
@@ -105,24 +86,6 @@ export const handler = async (event) => {
   } catch (error) {
     console.error('Delete image error:', error)
 
-    if (error.name === 'JsonWebTokenError') {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({
-          success: false,
-          message: 'Invalid token',
-        }),
-      }
-    }
-
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        message: 'Server error',
-      }),
-    }
+    return commonErrorResponse(error)
   }
 }

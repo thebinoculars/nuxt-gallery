@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "postbuild": "node utils/redirect.js",
     "lint:js": "eslint --ext \".ts,.vue\" --ignore-pattern .gitignore .",
     "lint:prettier": "prettier --check .",
     "lint": "yarn lint:js && yarn lint:prettier",
@@ -21,6 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.9.0",
     "nuxt": "^3.13.0",
+    "toml": "^3.0.0",
     "vue3-toastify": "^0.2.8"
   },
   "devDependencies": {

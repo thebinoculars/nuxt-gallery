@@ -1,26 +1,11 @@
 import { MongoClient, ObjectId } from 'mongodb'
-import jwt from 'jsonwebtoken'
-
-const verifyToken = (authorization) => {
-  if (!authorization?.startsWith('Bearer ')) {
-    throw new Error('Invalid token')
-  }
-  const token = authorization.substring(7)
-  return jwt.verify(token, process.env.JWT_SECRET)
-}
+import { verifyToken } from '../utils/jwt'
+import { commonErrorResponse } from '../utils/http'
 
 export const handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Content-Type': 'application/json',
-  }
-
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers,
       body: '',
     }
   }
@@ -98,7 +83,6 @@ export const handler = async (event) => {
 
         return {
           statusCode: 200,
-          headers,
           body: JSON.stringify({
             success: true,
             data: albumsWithCounts,
@@ -119,7 +103,6 @@ export const handler = async (event) => {
         if (!name?.trim()) {
           return {
             statusCode: 400,
-            headers,
             body: JSON.stringify({
               success: false,
               message: 'Album name is required',
@@ -140,7 +123,6 @@ export const handler = async (event) => {
 
         return {
           statusCode: 200,
-          headers,
           body: JSON.stringify({
             success: true,
             data: {
@@ -153,7 +135,6 @@ export const handler = async (event) => {
 
       return {
         statusCode: 405,
-        headers,
         body: JSON.stringify({ success: false, message: 'Method not allowed' }),
       }
     } finally {
@@ -162,24 +143,6 @@ export const handler = async (event) => {
   } catch (error) {
     console.error('Albums error:', error)
 
-    if (error.name === 'JsonWebTokenError') {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({
-          success: false,
-          message: 'Invalid token',
-        }),
-      }
-    }
-
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        message: 'Server error',
-      }),
-    }
+    return commonErrorResponse(error)
   }
 }

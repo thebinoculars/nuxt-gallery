@@ -1,15 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb'
-import jwt from 'jsonwebtoken'
+import { verifyToken } from '../utils/jwt'
 import { v2 as cloudinary } from 'cloudinary'
-
-// Token verification
-const verifyToken = (authorization) => {
-  if (!authorization?.startsWith('Bearer ')) {
-    throw new Error('Invalid token')
-  }
-  const token = authorization.substring(7)
-  return jwt.verify(token, process.env.JWT_SECRET)
-}
+import { commonErrorResponse } from '../utils/http'
 
 // Basic multipart parser (Netlify compatible)
 const parseMultipart = (body, boundary) => {
@@ -53,21 +45,13 @@ const parseMultipart = (body, boundary) => {
 }
 
 export const handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json',
-  }
-
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' }
+    return { statusCode: 200, body: '' }
   }
 
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
   }
@@ -85,7 +69,6 @@ export const handler = async (event) => {
     if (!contentType?.includes('multipart/form-data')) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({
           success: false,
           message: 'Content-Type must be multipart/form-data',
@@ -97,7 +80,6 @@ export const handler = async (event) => {
     if (!boundary) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({ success: false, message: 'Boundary not found in Content-Type' }),
       }
     }
@@ -114,7 +96,6 @@ export const handler = async (event) => {
     if (!file || !albumId || !ObjectId.isValid(albumId)) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({ success: false, message: 'File and valid albumId are required' }),
       }
     }
@@ -122,17 +103,15 @@ export const handler = async (event) => {
     if (!file.contentType.startsWith('image/')) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({ success: false, message: 'Only image files are allowed' }),
       }
     }
 
-    const maxSize = 10 * 1024 * 1024
+    const maxSize = 6 * 1024 * 1024
     if (file.content.length > maxSize) {
       return {
         statusCode: 400,
-        headers,
-        body: JSON.stringify({ success: false, message: 'File too large (max 10MB)' }),
+        body: JSON.stringify({ success: false, message: 'File too large (max 6MB)' }),
       }
     }
 
@@ -151,7 +130,6 @@ export const handler = async (event) => {
       if (!album) {
         return {
           statusCode: 404,
-          headers,
           body: JSON.stringify({ success: false, message: 'Album not found' }),
         }
       }
@@ -200,7 +178,6 @@ export const handler = async (event) => {
 
       return {
         statusCode: 200,
-        headers,
         body: JSON.stringify({
           success: true,
           data: { _id: insertResult.insertedId, ...imageDoc },
@@ -212,18 +189,6 @@ export const handler = async (event) => {
   } catch (error) {
     console.error('Upload error:', error)
 
-    if (error.name === 'JsonWebTokenError') {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ success: false, message: 'Invalid token' }),
-      }
-    }
-
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ success: false, message: 'Server error' }),
-    }
+    return commonErrorResponse(error)
   }
 }

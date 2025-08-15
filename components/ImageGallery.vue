@@ -261,7 +261,7 @@ const uploadFiles = async (files) => {
   if (files.length === 0) return
 
   // Validate file sizes
-  const maxSize = 10 * 1024 * 1024 // 10MB
+  const maxSize = 6 * 1024 * 1024 // 6MB
   const validFiles = files.filter((file) => {
     if (file.size > maxSize) {
       $toast.error(`File ${file.name}} is too large (max 10MB)`)

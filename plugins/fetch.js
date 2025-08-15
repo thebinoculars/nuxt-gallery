@@ -5,7 +5,7 @@ export default defineNuxtPlugin(() => {
   const originalFetch = globalThis.$fetch
 
   globalThis.$fetch = $fetch.create({
-    onRequest({ request, options }) {
+    onRequest({ options }) {
       if (token.value) {
         options.headers = {
           ...options.headers,
@@ -14,7 +14,7 @@ export default defineNuxtPlugin(() => {
       }
     },
     onResponseError({ response }) {
-      if (response.status === 401) {
+      if (response.status === 401 && !response.data?.unauthenticated) {
         // Token expired or invalid, logout user
         const { logout } = useAuth()
         logout()

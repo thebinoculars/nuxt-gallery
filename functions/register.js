@@ -2,17 +2,9 @@ import bcrypt from 'bcryptjs'
 import { MongoClient } from 'mongodb'
 
 export const handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json',
-  }
-
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers,
       body: '',
     }
   }
@@ -20,7 +12,6 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
   }
@@ -31,7 +22,6 @@ export const handler = async (event) => {
     if (!email || !password) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({
           success: false,
           message: 'Email and password are required',
@@ -42,7 +32,6 @@ export const handler = async (event) => {
     if (password.length < 6) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({
           success: false,
           message: 'Password must be at least 6 characters long',
@@ -63,7 +52,6 @@ export const handler = async (event) => {
       if (existingUser) {
         return {
           statusCode: 409,
-          headers,
           body: JSON.stringify({
             success: false,
             message: 'Email is already in use',
@@ -88,7 +76,6 @@ export const handler = async (event) => {
 
       return {
         statusCode: 200,
-        headers,
         body: JSON.stringify({
           success: true,
           data: {
@@ -107,7 +94,6 @@ export const handler = async (event) => {
 
     return {
       statusCode: 500,
-      headers,
       body: JSON.stringify({
         success: false,
         message: 'Server error',

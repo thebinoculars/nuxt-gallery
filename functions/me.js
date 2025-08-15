@@ -1,18 +1,11 @@
 import jwt from 'jsonwebtoken'
 import { MongoClient, ObjectId } from 'mongodb'
+import { commonErrorResponse } from '../utils/http'
 
 export const handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Content-Type': 'application/json',
-  }
-
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers,
       body: '',
     }
   }
@@ -20,7 +13,6 @@ export const handler = async (event) => {
   if (event.httpMethod !== 'GET') {
     return {
       statusCode: 405,
-      headers,
       body: JSON.stringify({ success: false, message: 'Method not allowed' }),
     }
   }
@@ -30,7 +22,6 @@ export const handler = async (event) => {
     if (!authorization?.startsWith('Bearer ')) {
       return {
         statusCode: 401,
-        headers,
         body: JSON.stringify({
           success: false,
           message: 'Invalid token',
@@ -55,7 +46,6 @@ export const handler = async (event) => {
       if (!user) {
         return {
           statusCode: 401,
-          headers,
           body: JSON.stringify({
             success: false,
             message: 'User not found',
@@ -66,7 +56,6 @@ export const handler = async (event) => {
       if (!user.isApproved) {
         return {
           statusCode: 403,
-          headers,
           body: JSON.stringify({
             success: false,
             message: 'Account not approved',
@@ -76,7 +65,6 @@ export const handler = async (event) => {
 
       return {
         statusCode: 200,
-        headers,
         body: JSON.stringify({
           success: true,
           data: {
@@ -93,24 +81,6 @@ export const handler = async (event) => {
   } catch (error) {
     console.error('Get me error:', error)
 
-    if (error.name === 'JsonWebTokenError') {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({
-          success: false,
-          message: 'Invalid token',
-        }),
-      }
-    }
-
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        message: 'Server error',
-      }),
-    }
+    return commonErrorResponse(error)
   }
 }
