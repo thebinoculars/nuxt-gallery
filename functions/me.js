@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { MongoClient, ObjectId } from 'mongodb'
 import { commonErrorResponse } from '../utils/http'
 
-export const handler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,

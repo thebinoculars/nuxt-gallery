@@ -44,7 +44,7 @@ const parseMultipart = (body, boundary) => {
   return result
 }
 
-export const handler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, body: '' }
   }

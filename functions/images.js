@@ -3,7 +3,7 @@ import { verifyToken } from '../utils/jwt'
 import { v2 as cloudinary } from 'cloudinary'
 import { commonErrorResponse } from '../utils/http'
 
-export const handler = async (event) => {
+exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
